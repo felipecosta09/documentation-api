@@ -30,7 +30,7 @@ This feature can be used in conjunction with a GET request to copy communication
   - `type`: `"settings"`,
   - `attributes`: Object containing
     - `type`: `"communication"`
-    - `channel`: String, must be one of the following: email, sms, slack, pager-duty, sns
+    - `channel`: String, must be one of the following: email, sms, slack, pager-duty, sns, webhook
     - `enabled`: Boolean, true for turning on, false for turning off this channel.
     - `manual`: Boolean, *(only used for SNS channels)* true for allowing users to manually send individual checks, false for disabling this option.
     - `filter`: Optional object (defines which checks you want to be included) including services, regions, categories, statuses, ruleIds, riskLevel, suppressed, and tags.
@@ -68,6 +68,7 @@ The table below give more information about configuration options:
 | slack  | `{ "url": "https://hooks.slack.com/services/your-slack-webhook",` <br>`"channel": "#your-channel",` <br>`"displayIntroducedBy": false,` Boolean, true for adding user to message<br>`"displayResource": false,` Boolean, true for adding resource to message<br>`"displayTags": false}` Boolean, true for adding associated tags to message   |
 | pager-duty  |   `{ "serviceName": "yourServiceName", "serviceKey": "yourServiceKey" }` |
 | sns  |  `{ "arn": "arn:aws:sns:REGION:ACCOUNT_ID:TOPIC_NAME"}`  |
+| webhook  |  `{ "url": "https://your-webhook-url.com", "securityToken": "yourSecurityToken" }`  |
 
 
 Example request for creating an account level pager-duty setting:
@@ -161,7 +162,7 @@ This feature can be used in conjunction with a POST request to copy communicatio
 `GET /settings/communication`
 
 ##### Parameters
-- `channel`: *optional* Provide if you want to only get settings for one specific channel: email, sms, slack, pager-duty, or sns.
+- `channel`: *optional* Provide if you want to only get settings for one specific channel: email, sms, slack, pager-duty, sns or webhook.
 - `accountId`: *optional* Cloud Conformity ID of the account. Provide to get only settings set for the specified account.
 - `includeParents`: *optional* (true|false) Can only be used in conjunction with the accountId parameter. Specify `true` if you want to see both account level settings and organisation level settings.
 
@@ -530,7 +531,7 @@ A PATCH request to this endpoint allows you to update a specific communication s
   - `type`: `settings`,
   - `attributes`: Object containing
     - `type`: `"communication"`
-    - `channel`: String, must be one of the following: email, sms, slack, pager-duty, sns
+    - `channel`: String, must be one of the following: email, sms, slack, pager-duty, sns, webhook
     - `enabled`: Boolean, true for turning on, false for turning off this channel.
     - `manual`: Boolean, *(only used for SNS channels)* true for allowing users to manually send individual checks, false for disabling this option.
     - `filter`: Optional object (defines which checks you want to be included) including services, regions, categories, statuses, ruleIds, riskLevel, suppressed, and tags.
@@ -563,6 +564,7 @@ The table below give more information about configuration options:
 | slack  | `{ "url": "https://hooks.slack.com/services/your-slack-webhook",` <br>`"channel": "#your-channel",` <br>`"displayIntroducedBy": false,` Boolean, true for adding user to message<br>`"displayResource": false,` Boolean, true for adding resource to message<br>`"displayTags": false}` Boolean, true for adding associated tags to message   |
 | pager-duty  |   `{ "serviceName": "yourServiceName", "serviceKey": "yourServiceKey" }` |
 | sns  |  `{ "arn": "arn:aws:sns:REGION:ACCOUNT_ID:TOPIC_NAME"}`  |
+| webhook  |  `{ "url": "https://your-webhook-url.com", "securityToken": "yourSecurityToken" }`  |
 
 
 Example request to update an account level pager-duty setting:
