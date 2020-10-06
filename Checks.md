@@ -554,10 +554,11 @@ This endpoint allows you to collect checks for specified accounts.
 `GET /checks`
 
 ##### Parameters
+
 - `accountIds`: A comma-separated list of Cloud Conformity accountIds. (required)
 - `page[size]`: Indicates the number of results that should be returned. Maximum value is 1000 and defaults to 100 if not specified
 - `page[number]`: Indicates the page number, defaults to 0
-- `filter`: Optional parameter including services, regions, categories, statuses, ruleIds, riskLevel, suppressed, and tags.
+- `filter`: Optional parameter including services, regions, categories, statuses, ruleIds, riskLevel, suppressed, tags and checks.
 
 ###### There is a 10k limit to the maximum number of overall results that can be returned. Paging will not work for higher than this limit. To fetch larger numbers, segment your requests using account and region filtering. On larger accounts, filter requests per account, per region, per service.
 
@@ -595,11 +596,14 @@ The table below give more information about filter options:
 | filter[ruleIds]              | AWS Rules: EC2-001 \| EC2-002 \| etc <br /><br />Azure Rules: KeyVault-001 \| StorageAccounts-001 \| etc <br /><br />For more information about rules, please refer to [Cloud Conformity Services Endpoint](https://us-west-2.cloudconformity.com/v1/services)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | filter[suppressedFilterMode] | "v1" \| "v2" <br /><br /> Whether to use the `"v1"` or `"v2"` suppressed functionality. `"v1"`: Using `suppressed=true` will return both suppressed and unsuppressed checks, `suppressed=false` will just return unsuppressed checks. `"v2"`: Using `suppressed=true` return will just return suppressed checks. Defaults to "v1".                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | filter[suppressed]           | true \| false <br /><br /> Whether or not include all suppressed checks. The default value is `true` for "v1" and omitted for "v2"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| filter[createdDate]          | The date when the check was created<br /><br />The numeric value of the specified date as the number of milliseconds since January 1, 1970, 00:00:00 UTC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| filter[createdLessThanDays]          | Only show checks created less than X days ago. When this field is populated, the checks created within the last X days will be returned. When both this field and `filter.createdMoreThanDays` are populated, it will display the checks created between `filter.createdLessThanDays` days ago and `filter.createdMoreThanDays` days ago. Number. e.g. 5.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| filter[createdMoreThanDays]          | Only show checks created more than X days ago. When this field is populated, the checks created up to X days ago will be returned. Number. e.g. 5.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| filter[createdDate]          | The date when the check was created<br /><br />The numeric value of the specified date as the number of milliseconds since January 1, 1970, 00:00:00 UTC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| filter[createdLessThanDays]  | Only show checks created less than X days ago. When this field is populated, the checks created within the last X days will be returned. When both this field and `filter.createdMoreThanDays` are populated, it will display the checks created between `filter.createdLessThanDays` days ago and `filter.createdMoreThanDays` days ago. Number. e.g. 5.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| filter[createdMoreThanDays]  | Only show checks created more than X days ago. When this field is populated, the checks created up to X days ago will be returned. Number. e.g. 5.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | filter[tags]                 | Any assigned metadata tags to your resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| filter[compliances]          | An array of supported standard or framework ids. Possible values: ["AWAF" \| "CISAWSF" \| "CISAZUREF" \| "CISAWSTTW" \| "PCI" \| "HIPAA" \| "GDPR" \| "APRA" \| "NIST4" \| "SOC2" \| "NIST-CSF" \| "ISO27001" \| "AGISM" \| "ASAE-3150" \| "MAS"]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| filter[compliances]          | An array of supported standard or framework ids. Possible values: ["AWAF" \| "CISAWSF" \| "CISAZUREF" \| "CISAWSTTW" \| "PCI" \| "HIPAA" \| "GDPR" \| "APRA" \| "NIST4" \| "SOC2" \| "NIST-CSF" \| "ISO27001" \| "AGISM" \| "ASAE-3150" \| "MAS"]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| filter[excludeChecks]        | true \| false <br /><br /> Whether or not to exclude controls from PDF reports with one or more associated checks. The default value is `false`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| filter[excludeNoChecks]      | true \| false <br /><br /> Whether or not to exclude controls from PDF reports with 0 associated checks. The default value is `false`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+
 <br />
 
 Example Request:
@@ -609,9 +613,13 @@ curl -g -H "Content-Type: application/vnd.api+json" \
 -H "Authorization: ApiKey S1YnrbQuWagQS0MvbSchNHDO73XHqdAqH52RxEPGAggOYiXTxrwPfmiTNqQkTq3p" \
 https://us-west-2-api.cloudconformity.com/v1/checks?accountIds=r1gyR4cqg&page[size]=100&page[number]=0&filter[regions]=us-west-2&filter[ruleIds]=EC2-001,EC2-002&filter[statuses]=SUCCESS&filter[categories]=security&filter[riskLevels]=HIGH&filter[services]=EC2&filter[createdDate]=1502572157914
 ```
+
 Example Response:
+
 ###### Note the size of this response can be quite large and the example below is purposefully truncated.
+
 ###### The check property `providerResourceId` is only returned for a limited amount of AWS rules. This property represents the [AWS ARN](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) of the related resource.
+
 ```json
 {
   "data": [
@@ -725,7 +733,7 @@ This endpoint allows you to get the details of the specified check.
 ##### Parameters
 
 - `id`: The Cloud Conformity ID of the check <br /><br />
-Note: the Cloud Conformity ID of a check for an Azure account contains the forward slash character `/` which needs to be replaced with the encoded character `%2F` when passed in the request URL.
+  Note: the Cloud Conformity ID of a check for an Azure account contains the forward slash character `/` which needs to be replaced with the encoded character `%2F` when passed in the request URL.
 
 Example Request to view details of a check for an AWS account:
 
@@ -783,8 +791,10 @@ Example Response:
     }
 }
 ```
+
 Example Request to view details of a check for an Azure account with ID <br />
 `ccc:r2gyR4cqg:SecurityCenter-008:SecurityCenter:global:/subscriptions/9f7bcadb-3626-46dx-9917-1397384797f40/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn`:
+
 ```shell script
 curl -H "Content-Type: application/vnd.api+json" \
 -H "Authorization: ApiKey S1YnrbQuWagQS0MvbSchNHDO73XHqdAqH52RxEPGAggOYiXTxrwPfmiTNqQkTq3p" \
@@ -796,13 +806,16 @@ curl -H "Content-Type: application/vnd.api+json" \
 A DELETE request to this endpoint allows a user with WRITE access to the associated account to delete the check.
 
 ##### Endpoints:
+
 `DELETE /checks/checkId`
 
 ##### Parameters
+
 - `id`: The Cloud Conformity ID of the check <br /><br />
-Note: the Cloud Conformity ID of a check for an Azure account contains the forward slash character `/` which needs to be replaced with the encoded character `%2F` when passed in the request URL.
+  Note: the Cloud Conformity ID of a check for an Azure account contains the forward slash character `/` which needs to be replaced with the encoded character `%2F` when passed in the request URL.
 
 Example Request to delete a check for an AWS account:
+
 ```
 curl -X DELETE \
 -H "Content-Type: application/vnd.api+json" \
@@ -820,8 +833,10 @@ Example Response:
     }]
 }
 ```
+
 Example Request to delete a check for an Azure account with ID <br />
 `ccc:r2gyR4cqg:SecurityCenter-008:SecurityCenter:global:/subscriptions/9f7bcadb-3626-46dx-9917-1397384797f40/providers/Microsoft.Authorization/policyAssignments/SecurityCenterBuiltIn`:
+
 ```shell script
 curl -X DELETE \
 -H "Content-Type: application/vnd.api+json" \
